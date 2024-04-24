@@ -1,14 +1,42 @@
-import csv
+from flask import Flask, jsonify, request
 from pymongo import MongoClient
+import csv
 
+app = Flask(__name__)
+
+# เชื่อมต่อ MongoDB
 client = MongoClient('mongodb://localhost:27017/')
 db = client['best'] 
-collection = db['test']  
+collection = db['test']
 
-with open('37176ff3-dd70-4f1f-8e1d-83eda3cf77e4.csv', 'r') as file:
-    reader = csv.DictReader(file)
-    for row in reader:
-        collection.insert_one(row)
+# สร้าง API Get Data
+@app.route('/data', methods=['GET'])
+def get_data():
+    data = list(collection.find())
+    for item in data:
+        item['_id'] = str(item['_id'])
+    return jsonify(data), 200
 
-print("เสร็จสิ้นการนำเข้าข้อมูลลงใน MongoDB")
-## เพิ่มข้อมูลไฟล์ CSV ลงใน mongodb
+# สร้าง API Add Data
+@app.route('/data', methods=['POST'])
+def add_data():
+    new_data = request.get_json()
+    collection.insert_one(new_data)
+    return jsonify({"message": "Data added successfully"}), 201
+
+# สร้าง API Update Data
+@app.route('/data/<id>', methods=['PUT'])
+def update_data(id):
+    updated_data = request.get_json()
+    collection.update_one({"_id": ObjectId(id)}, {"$set": updated_data})
+    return jsonify({"message": "Data updated successfully"}), 200
+
+# สร้าง API Delete Data
+@app.route('/data/<id>', methods=['DELETE'])
+def delete_data(id):
+    collection.delete_one({"_id": (id)})
+    return jsonify({"message": "Data deleted successfully"}), 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
