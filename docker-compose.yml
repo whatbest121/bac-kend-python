@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:5000"
+    depends_on:
+      - db
+    environment:
+      - FLASK_ENV=development
+      - MONGO_URI=mongodb://db:27017/best
+    networks:
+      - my_network
+
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
