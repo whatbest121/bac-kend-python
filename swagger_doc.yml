@@ -1,0 +1,102 @@
+swagger: "2.0"
+info:
+  title: "My API"
+  description: "API Documentation"
+  version: "1.0.0"
+host: "localhost:5000"
+basePath: "/"
+schemes:
+  - "http"
+paths:
+  /login:
+    post:
+      summary: "User Login Endpoint"
+      description: "Authenticate users and generate access token"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              username:
+                type: "string"
+              password:
+                type: "string"
+      responses:
+        200:
+          description: "User logged in successfully"
+          examples:
+            access_token: "JWT access token"
+        401:
+          description: "Invalid username or password"
+  /data:
+    get:
+      summary: "Get Seeds"
+      description: "Retrieve all seed data from the database"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                _id:
+                  type: "string"
+                  description: "ID of the seed"
+                Seed_RepDate:
+                  type: "string"
+                  description: "Replication Date"
+                Seed_Year:
+                  type: "string"
+                  description: "Seed Year"
+                Seeds_YearWeek:
+                  type: "string"
+                  description: "Seed Year Week"
+                Seed_Varity:
+                  type: "string"
+                  description: "Seed Variety"
+                Seed_RDCSD:
+                  type: "string"
+                  description: "Seed RDCSD"
+                Seed_Stock2Sale:
+                  type: "string"
+                  description: "Seed Stock to Sale"
+                Seed_Season:
+                  type: "string"
+                  description: "Seed Season"
+                Seed_Crop_Year:
+                  type: "string"
+                  description: "Seed Crop Year"
+      security:
+        - JWT: []
+    parameters:
+      - name: limit
+        in: query
+        description: "Limit the number of results"
+        required: false
+        type: integer
+        format: int32
+        default: 10
+      - name: page
+        in: query
+        description: "Page number"
+        required: false
+        type: integer
+        format: int32
+        default: 1
+securityDefinitions:
+  JWT:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+security:
+  - JWT: []
+
